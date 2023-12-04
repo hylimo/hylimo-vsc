@@ -1,37 +1,37 @@
 // @ts-check
-const path = require('path');
+const path = require("path");
 
-const outputPath = path.resolve(__dirname, 'out');
+const outputPath = path.resolve(__dirname, "out");
 
 /**@type {import('webpack').Configuration}*/
 const config = {
-    target: 'web',
+    target: "web",
 
-    entry: path.resolve(__dirname, 'src/main.ts'),
+    entry: path.resolve(__dirname, "src/main.ts"),
     output: {
-		filename: 'webview.js',
+        filename: "webview.js",
         path: outputPath
     },
-    devtool: 'eval-source-map',
+    devtool: "eval-source-map",
 
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: [".ts", ".tsx", ".js"]
     },
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: ['ts-loader']
+                use: ["ts-loader"]
             },
             {
                 test: /\.js$/,
-                use: ['source-map-loader'],
-                enforce: 'pre'
+                use: ["source-map-loader"],
+                enforce: "pre"
             },
             {
                 test: /\.css$/,
                 exclude: /\.useable\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: ["style-loader", "css-loader"]
             }
         ]
     },

@@ -1,21 +1,21 @@
 {
-	"name": "hylimo-vsc-client",
-	"description": "VSCode part of the hylimo extension",
-	"author": "Niklas Krieger",
-	"version": "0.0.1",
-	"publisher": "vscode",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
-	},
-	"engines": {
-		"vscode": "^1.52.0"
-	},
-	"scripts": {},
-	"dependencies": {
-		"sprotty-vscode": "^0.5.0"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.52.0"
-	}
+    "name": "hylimo-vsc-client",
+    "description": "VSCode part of the hylimo extension",
+    "author": "Niklas Krieger",
+    "version": "0.0.1",
+    "publisher": "vscode",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Microsoft/vscode-extension-samples"
+    },
+    "engines": {
+        "vscode": "^1.52.0"
+    },
+    "scripts": {},
+    "dependencies": {
+        "sprotty-vscode": "^0.5.0"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.52.0"
+    }
 }

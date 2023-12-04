@@ -1,6 +1,4 @@
-import {
-	createConnection, TextDocuments, ProposedFeatures, TextDocumentSyncKind
-} from 'vscode-languageserver/node';
+import { createConnection, TextDocuments, ProposedFeatures, TextDocumentSyncKind } from "vscode-languageserver/node";
 import { LanguageServer } from "@hylimo/language-server";
 import { classDiagramModule } from "@hylimo/diagram";
 
