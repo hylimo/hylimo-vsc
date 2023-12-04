@@ -1,0 +1,16 @@
+.sprotty {
+    --diagram-layout-color: #606770;
+    --diagram-layout-color-selected: #00c6f2;
+    --diagram-layout-color-overlay: #88888855;
+    --diagram-background: #fffffe;
+    --diagram-grid: #bbb;
+}
+
+.sprotty svg {
+    outline: none !important;
+}
+
+.vscode-dark .sprotty {
+    --diagram-background: #1e1e1e;
+    --diagram-grid: #444;
+}

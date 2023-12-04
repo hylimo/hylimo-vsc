@@ -13,6 +13,9 @@
     },
     "scripts": {},
     "dependencies": {
+        "@hylimo/diagram-protocol": "^0.0.1",
+        "@hylimo/diagram-render-pdf": "^0.0.1",
+        "@hylimo/diagram-render-svg": "^0.0.1",
         "sprotty-vscode": "^0.5.0"
     },
     "devDependencies": {

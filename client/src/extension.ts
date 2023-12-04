@@ -1,5 +1,5 @@
 import * as path from "path";
-import { workspace, ExtensionContext, window, WebviewPanel, Uri } from "vscode";
+import { workspace, ExtensionContext, window, WebviewPanel, Uri, Range, TextEditorRevealType } from "vscode";
 
 import {
     LanguageClient,
@@ -9,7 +9,7 @@ import {
     NotificationType
 } from "vscode-languageclient/node";
 import { Messenger } from "vscode-messenger";
-import { LspWebviewPanelManager, LspWebviewPanelManagerOptions } from "sprotty-vscode/lib/lsp";
+import { LspWebviewEndpoint, LspWebviewPanelManager, LspWebviewPanelManagerOptions } from "sprotty-vscode/lib/lsp";
 import {
     SprottyDiagramIdentifier,
     createFileUri,
@@ -17,14 +17,26 @@ import {
     registerDefaultCommands,
     registerTextEditorSync
 } from "sprotty-vscode";
+import { ActionMessage } from "sprotty-protocol";
+import {
+    DiagramActionNotification,
+    PublishDocumentRevealNotification,
+    PublishDocumentRevealParams
+} from "@hylimo/diagram-protocol";
 
 let client: LanguageClient;
+
+class WebviewEndpoint extends LspWebviewEndpoint {
+    async receiveAction(message: ActionMessage): Promise<void> {
+        await super.receiveAction(message);
+        await this.languageClient.sendNotification(DiagramActionNotification.type.method, message);
+    }
+}
 
 class WebviewPanelManager extends LspWebviewPanelManager {
     constructor(options: LspWebviewPanelManagerOptions) {
         super(options);
-        options.languageClient.onNotification(new NotificationType("diagram/action"), (message) => {
-            console.log("wtf");
+        options.languageClient.onNotification(DiagramActionNotification.type.method, (message) => {
             this.acceptFromLanguageServer(message as any);
         });
     }
@@ -44,6 +56,18 @@ class WebviewPanelManager extends LspWebviewPanelManager {
             uri: uri.toString()
         };
     }
+
+    override createEndpoint(identifier: SprottyDiagramIdentifier): LspWebviewEndpoint {
+        const webviewContainer = this.createWebview(identifier);
+        const participant = this.messenger.registerWebviewPanel(webviewContainer);
+        return new WebviewEndpoint({
+            languageClient: this.languageClient,
+            webviewContainer,
+            messenger: this.messenger,
+            messageParticipant: participant,
+            identifier
+        });
+    }
 }
 
 export function activate(context: ExtensionContext) {
@@ -60,11 +84,8 @@ export function activate(context: ExtensionContext) {
 }
 
 function createLanguageClient(context: ExtensionContext): LanguageClient {
-    // The server is implemented in node
     const serverModule = context.asAbsolutePath(path.join("server", "out", "server.js"));
 
-    // If the extension is launched in debug mode then the debug server options are used
-    // Otherwise the run options are used
     const serverOptions: ServerOptions = {
         run: { module: serverModule, transport: TransportKind.ipc },
         debug: {
@@ -73,16 +94,24 @@ function createLanguageClient(context: ExtensionContext): LanguageClient {
         }
     };
 
-    // Options to control the language client
     const clientOptions: LanguageClientOptions = {
-        // Register the server for plain text documents
         documentSelector: [{ language: "hylimo" }]
     };
 
-    // Create the language client and start the client.
     client = new LanguageClient("hylimo", "HyLiMo Language Server", serverOptions, clientOptions);
 
-    // Start the client. This will also launch the server
+    client.onNotification(PublishDocumentRevealNotification.type.method, (params: PublishDocumentRevealParams) => {
+        console.log(params);
+        const textEditor = window.visibleTextEditors.find((editor) => editor.document.uri.toString() == params.uri);
+        if (textEditor != undefined) {
+            const range = params.range;
+            textEditor.revealRange(
+                new Range(range.start.line + 1, range.start.character + 1, range.end.line + 1, range.end.character + 1),
+                TextEditorRevealType.InCenterIfOutsideViewport
+            );
+        }
+    });
+
     client.start();
     return client;
 }
