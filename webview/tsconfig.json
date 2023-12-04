@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "strictNullChecks": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "skipLibCheck": true,
+        "module": "commonjs",
+        "target": "ES6",
+        "outDir": "lib",
+        "lib": [
+            "es6",
+            "dom"
+        ]
+    },
+    "include": [
+        "src"
+    ]
+}

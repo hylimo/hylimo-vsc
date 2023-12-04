@@ -1,0 +1,18 @@
+{
+  "name": "hylimo-vsc-server",
+  "version": "1.0.0",
+  "description": "HyLiMo language server",
+  "main": "./client/out/extension",
+  "author": "Niklas Krieger",
+  "engines": {
+    "node": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hylimo/hylimo-vsc"
+  },
+  "dependencies": {
+    "@hylimo/language-server": "^0.0.1"
+  },
+  "scripts": {}
+}
