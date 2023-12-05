@@ -21,10 +21,13 @@ import { ActionMessage } from "sprotty-protocol";
 import {
     DiagramActionNotification,
     PublishDocumentRevealNotification,
-    PublishDocumentRevealParams
+    PublishDocumentRevealParams,
+    RemoteNotification,
+    RemoteRequest,
+    SetLanguageServerIdNotification
 } from "@hylimo/diagram-protocol";
 
-let client: LanguageClient;
+let clients: LanguageClient[] = [];
 
 class WebviewEndpoint extends LspWebviewEndpoint {
     async receiveAction(message: ActionMessage): Promise<void> {
@@ -71,7 +74,38 @@ class WebviewPanelManager extends LspWebviewPanelManager {
 }
 
 export function activate(context: ExtensionContext) {
-    const languageClient = createLanguageClient(context);
+    const clientOptions: LanguageClientOptions = {
+        documentSelector: [{ language: "hylimo" }]
+    };
+    const languageClient = createLanguageClient(context, "hylimo", clientOptions);
+    languageClient.onNotification(
+        PublishDocumentRevealNotification.type.method,
+        (params: PublishDocumentRevealParams) => {
+            const textEditor = window.visibleTextEditors.find((editor) => editor.document.uri.toString() == params.uri);
+            if (textEditor != undefined) {
+                const range = params.range;
+                textEditor.revealRange(
+                    new Range(
+                        range.start.line + 1,
+                        range.start.character + 1,
+                        range.end.line + 1,
+                        range.end.character + 1
+                    ),
+                    TextEditorRevealType.InCenterIfOutsideViewport
+                );
+            }
+        }
+    );
+
+    const languageClient2 = createLanguageClient(context, "hylimo", {
+        documentSelector: [
+            {
+                language: "hylimo",
+                pattern: "_invalid_"
+            }
+        ]
+    });
+    setupSecondaryLanguageServer(languageClient, languageClient2);
 
     const webviewViewProvider = new WebviewPanelManager({
         extensionUri: context.extensionUri,
@@ -83,7 +117,11 @@ export function activate(context: ExtensionContext) {
     registerTextEditorSync(webviewViewProvider, context);
 }
 
-function createLanguageClient(context: ExtensionContext): LanguageClient {
+function createLanguageClient(
+    context: ExtensionContext,
+    id: string,
+    clientOptions: LanguageClientOptions
+): LanguageClient {
     const serverModule = context.asAbsolutePath(path.join("server", "out", "server.js"));
 
     const serverOptions: ServerOptions = {
@@ -94,31 +132,28 @@ function createLanguageClient(context: ExtensionContext): LanguageClient {
         }
     };
 
-    const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ language: "hylimo" }]
-    };
-
-    client = new LanguageClient("hylimo", "HyLiMo Language Server", serverOptions, clientOptions);
-
-    client.onNotification(PublishDocumentRevealNotification.type.method, (params: PublishDocumentRevealParams) => {
-        console.log(params);
-        const textEditor = window.visibleTextEditors.find((editor) => editor.document.uri.toString() == params.uri);
-        if (textEditor != undefined) {
-            const range = params.range;
-            textEditor.revealRange(
-                new Range(range.start.line + 1, range.start.character + 1, range.end.line + 1, range.end.character + 1),
-                TextEditorRevealType.InCenterIfOutsideViewport
-            );
-        }
-    });
-
+    const client = new LanguageClient(id, "HyLiMo Language Server - " + id, serverOptions, clientOptions);
+    clients.push(client);
     client.start();
     return client;
 }
 
-export function deactivate(): Thenable<void> | undefined {
-    if (!client) {
-        return undefined;
-    }
-    return client.stop();
+function setupSecondaryLanguageServer(primary: LanguageClient, secondary: LanguageClient) {
+    primary.onNotification(RemoteNotification.type.method, (message) => {
+        secondary.sendNotification(RemoteNotification.type.method, message);
+    });
+    secondary.onNotification(RemoteNotification.type.method, (message) => {
+        primary.sendNotification(RemoteNotification.type.method, message);
+    });
+    primary.onRequest(RemoteRequest.type.method, async (request) => {
+        return secondary.sendRequest(RemoteRequest.type.method, request);
+    });
+    secondary.onRequest(RemoteRequest.type.method, (request) => {
+        return primary.sendRequest(RemoteRequest.type.method, request);
+    });
+    secondary.sendNotification(SetLanguageServerIdNotification.type.method, 1);
+}
+
+export function deactivate(): Promise<any> {
+    return Promise.all(clients.map((client) => client.stop()));
 }

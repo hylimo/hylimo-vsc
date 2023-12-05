@@ -24,7 +24,18 @@
                         "messages",
                         "verbose"
                     ],
-                    "default": "verbose",
+                    "default": "off",
+                    "description": "Traces the communication between VS Code and the language server."
+                },
+                "hylimo2.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
                     "description": "Traces the communication between VS Code and the language server."
                 }
             }
