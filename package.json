@@ -54,6 +54,13 @@
                 "configuration": "./language-configuration.json"
             }
         ],
+        "grammars": [
+            {
+                "language": "hylimo",
+                "scopeName": "source.hylimo",
+                "path": "./syntaxes/hylimo.tmLanguage.json"
+            }
+        ],
         "commands": [
             {
                 "command": "hylimo.diagram.open",
