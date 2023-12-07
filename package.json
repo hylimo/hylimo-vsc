@@ -9,9 +9,6 @@
     "categories": [
         "Other"
     ],
-    "activationEvents": [
-        "onLanguage:plaintext"
-    ],
     "main": "./client/out/extension.js",
     "contributes": {
         "configuration": {
@@ -67,6 +64,18 @@
                 "title": "Open graphical view",
                 "icon": "$(open-preview)",
                 "category": "HyLiMo Diagram"
+            },
+            {
+                "command": "hylimo.export.pdf",
+                "title": "Export diagram as PDF",
+                "icon": "$(file-pdf)",
+                "category": "HyLiMo Diagram"
+            },
+            {
+                "command": "hylimo.export.svg",
+                "title": "Export diagram as SVG",
+                "icon": "$(file-media)",
+                "category": "HyLiMo Diagram"
             }
         ],
         "menus": {
@@ -74,11 +83,29 @@
                 {
                     "command": "hylimo.diagram.open",
                     "when": "editorLangId == 'hylimo'"
+                },
+                {
+                    "command": "hylimo.export.pdf",
+                    "when": "editorLangId == 'hylimo'"
+                },
+                {
+                    "command": "hylimo.export.svg",
+                    "when": "editorLangId == 'hylimo'"
                 }
             ],
             "editor/context": [
                 {
                     "command": "hylimo.diagram.open",
+                    "when": "editorLangId == 'hylimo'",
+                    "group": "navigation"
+                },
+                {
+                    "command": "hylimo.export.pdf",
+                    "when": "editorLangId == 'hylimo'",
+                    "group": "navigation"
+                },
+                {
+                    "command": "hylimo.export.svg",
                     "when": "editorLangId == 'hylimo'",
                     "group": "navigation"
                 }
@@ -88,6 +115,16 @@
                     "command": "hylimo.diagram.open",
                     "when": "editorLangId == 'hylimo'",
                     "group": "navigation"
+                },
+                {
+                    "command": "hylimo.export.pdf",
+                    "when": "editorLangId == 'hylimo'",
+                    "group": "navigation"
+                },
+                {
+                    "command": "hylimo.export.svg",
+                    "when": "editorLangId == 'hylimo'",
+                    "group": "navigation"
                 }
             ],
             "explorer/context": [
@@ -95,16 +132,26 @@
                     "command": "hylimo.diagram.open",
                     "when": "resourceExtname == '.sm'",
                     "group": "navigation"
+                },
+                {
+                    "command": "hylimo.export.pdf",
+                    "when": "editorLangId == 'hylimo'",
+                    "group": "navigation"
+                },
+                {
+                    "command": "hylimo.export.svg",
+                    "when": "editorLangId == 'hylimo'",
+                    "group": "navigation"
                 }
             ]
         }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
+        "compile": "tsc -p ./ && cd webview && npm run build",
         "watch": "tsc -watch -p ./",
         "format": "prettier --write \"**/*.{ts,json,js,tsx,jsx}\"",
-        "postinstall": "cd client && npm install && cd ../server && npm install && cd .."
+        "postinstall": "cd client && npm install && cd ../server && npm install && cd ../webview && npm install && cd .."
     },
     "devDependencies": {
         "@types/mocha": "^10.0.6",

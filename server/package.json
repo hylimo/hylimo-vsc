@@ -12,7 +12,7 @@
         "url": "https://github.com/hylimo/hylimo-vsc"
     },
     "dependencies": {
-        "@hylimo/language-server": "^0.0.1"
+        "@hylimo/language-server": "^1.0.0"
     },
     "scripts": {}
 }

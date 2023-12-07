@@ -1,12 +1,11 @@
 import * as path from "path";
-import { workspace, ExtensionContext, window, WebviewPanel, Uri, Range, TextEditorRevealType } from "vscode";
+import { workspace, ExtensionContext, window, WebviewPanel, Uri, Range, TextEditorRevealType, commands } from "vscode";
 
 import {
     LanguageClient,
     LanguageClientOptions,
     ServerOptions,
     TransportKind,
-    NotificationType
 } from "vscode-languageclient/node";
 import { Messenger } from "vscode-messenger";
 import { LspWebviewEndpoint, LspWebviewPanelManager, LspWebviewPanelManagerOptions } from "sprotty-vscode/lib/lsp";
@@ -26,8 +25,12 @@ import {
     RemoteRequest,
     SetLanguageServerIdNotification
 } from "@hylimo/diagram-protocol";
+import { PDFRenderer } from "@hylimo/diagram-render-pdf";
+import { SVGRenderer } from "@hylimo/diagram-render-svg";
 
 let clients: LanguageClient[] = [];
+const pdfRenderer = new PDFRenderer();
+const svgRenderer = new SVGRenderer();
 
 class WebviewEndpoint extends LspWebviewEndpoint {
     async receiveAction(message: ActionMessage): Promise<void> {
@@ -115,6 +118,13 @@ export function activate(context: ExtensionContext) {
     });
     registerDefaultCommands(webviewViewProvider, context, { extensionPrefix: "hylimo" });
     registerTextEditorSync(webviewViewProvider, context);
+    registerRenderCommands(context);
+}
+
+function registerRenderCommands(context: ExtensionContext) {
+    context.subscriptions.push(commands.registerCommand("hylimo.export.svg", args => {
+        console.log(args)
+    }))
 }
 
 function createLanguageClient(
