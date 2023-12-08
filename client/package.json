@@ -13,12 +13,13 @@
     },
     "scripts": {},
     "dependencies": {
-        "@hylimo/diagram-protocol": "^1.0.0",
-        "@hylimo/diagram-render-pdf": "^1.0.0",
-        "@hylimo/diagram-render-svg": "^1.0.0",
+        "@hylimo/diagram-protocol": "^1.1.0",
+        "@hylimo/diagram-render-pdf": "^1.1.0",
+        "@hylimo/diagram-render-svg": "^1.1.0",
         "sprotty-vscode": "^0.5.0"
     },
     "devDependencies": {
+        "@types/node": "^20.10.4",
         "@types/pdfkit": "^0.13.3",
         "@types/vscode": "^1.52.0"
     }

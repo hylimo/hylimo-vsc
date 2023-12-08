@@ -10,7 +10,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@hylimo/diagram-ui": "^1.0.0",
+        "@hylimo/diagram-ui": "^1.1.0",
         "reflect-metadata": "^0.1.13",
         "sprotty-vscode-webview": "^0.5.0"
     },

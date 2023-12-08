@@ -7,7 +7,7 @@ const connection = createConnection(ProposedFeatures.all);
 const languageServer = new LanguageServer({
     defaultConfig: {
         diagramConfig: {
-            theme: "light"
+            theme: "dark"
         },
         settings: {}
     },

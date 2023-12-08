@@ -19,6 +19,9 @@ import {
 import { ActionMessage } from "sprotty-protocol";
 import {
     DiagramActionNotification,
+    DiagramRequest,
+    DiagramRequestMessage,
+    DiagramResponseMessage,
     PublishDocumentRevealNotification,
     PublishDocumentRevealParams,
     RemoteNotification,
@@ -122,8 +125,27 @@ export function activate(context: ExtensionContext) {
 }
 
 function registerRenderCommands(context: ExtensionContext) {
-    context.subscriptions.push(commands.registerCommand("hylimo.export.svg", args => {
-        console.log(args)
+    context.subscriptions.push(commands.registerCommand("hylimo.export.svg", async args => {
+        const filePath = args.path;
+        const uri = Uri.parse(filePath).toString();
+        const diagramRes = (await clients[0].sendRequest(DiagramRequest.type.method, { diagramUri: uri})) as DiagramResponseMessage;
+        if (diagramRes.diagram != undefined) {
+            const renderedDiagram = svgRenderer.render(diagramRes.diagram.rootElement);
+            const svgFilePath = filePath.replace(/\.hyl(imo)?$/, ".svg");
+            await workspace.fs.writeFile(Uri.parse(svgFilePath), Buffer.from(renderedDiagram));
+        }
+    }))
+
+    context.subscriptions.push(commands.registerCommand("hylimo.export.pdf", async args => {
+        const filePath = args.path;
+        const uri = Uri.parse(filePath).toString();
+        const diagramRes = (await clients[0].sendRequest(DiagramRequest.type.method, { diagramUri: uri})) as DiagramResponseMessage;
+        if (diagramRes.diagram != undefined) {
+            const renderedDiagram = await pdfRenderer.render(diagramRes.diagram.rootElement, "#000000");
+            const pdfFilePath = filePath.replace(/\.hyl(imo)?$/, ".pdf");
+            const renderedDiagramConcatenated = Buffer.concat(renderedDiagram);
+            await workspace.fs.writeFile(Uri.parse(pdfFilePath), renderedDiagramConcatenated);
+        }
     }))
 }
 

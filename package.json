@@ -23,17 +23,6 @@
                     ],
                     "default": "off",
                     "description": "Traces the communication between VS Code and the language server."
-                },
-                "hylimo2.trace.server": {
-                    "scope": "window",
-                    "type": "string",
-                    "enum": [
-                        "off",
-                        "messages",
-                        "verbose"
-                    ],
-                    "default": "off",
-                    "description": "Traces the communication between VS Code and the language server."
                 }
             }
         },
@@ -148,8 +137,7 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./ && cd webview && npm run build",
-        "watch": "tsc -watch -p ./",
+        "build": "tsc -b && cd webview && npm run build",
         "format": "prettier --write \"**/*.{ts,json,js,tsx,jsx}\"",
         "postinstall": "cd client && npm install && cd ../server && npm install && cd ../webview && npm install && cd .."
     },
