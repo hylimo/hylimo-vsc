@@ -2,7 +2,8 @@
     "name": "hylimo-vsc",
     "displayName": "hylimo-vsc",
     "description": "HyLiMo hybrid diagramming support for VSCode",
-    "version": "0.0.1",
+    "version": "1.0.0",
+    "repository": "https://github.com/hylimo/hylimo-vsc",
     "engines": {
         "vscode": "^1.84.0"
     },
@@ -137,7 +138,7 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "build": "tsc -b && cd webview && npm run build",
+        "compile": "tsc -b && cd webview && npm run build",
         "format": "prettier --write \"**/*.{ts,json,js,tsx,jsx}\"",
         "postinstall": "cd client && npm install && cd ../server && npm install && cd ../webview && npm install && cd .."
     },
