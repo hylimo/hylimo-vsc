@@ -14,13 +14,11 @@ import {
     createFileUri,
     createWebviewPanel,
     registerDefaultCommands,
-    registerTextEditorSync
 } from "sprotty-vscode";
 import { ActionMessage } from "sprotty-protocol";
 import {
     DiagramActionNotification,
     DiagramRequest,
-    DiagramRequestMessage,
     DiagramResponseMessage,
     PublishDocumentRevealNotification,
     PublishDocumentRevealParams,
@@ -58,8 +56,11 @@ class WebviewPanelManager extends LspWebviewPanelManager {
         });
     }
 
-    protected async createDiagramIdentifier(uri: Uri, diagramType?: string): Promise<SprottyDiagramIdentifier> {
+    protected async createDiagramIdentifier(uri: Uri, diagramType?: string): Promise<SprottyDiagramIdentifier | undefined> {
         const res = await super.createDiagramIdentifier(uri, diagramType);
+        if (res == undefined) {
+            return undefined;
+        }
         return {
             ...res,
             uri: uri.toString()
@@ -120,7 +121,6 @@ export function activate(context: ExtensionContext) {
         messenger: new Messenger({ ignoreHiddenViews: false })
     });
     registerDefaultCommands(webviewViewProvider, context, { extensionPrefix: "hylimo" });
-    registerTextEditorSync(webviewViewProvider, context);
     registerRenderCommands(context);
 }
 
