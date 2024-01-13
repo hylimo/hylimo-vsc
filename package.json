@@ -4,6 +4,7 @@
     "description": "HyLiMo hybrid diagramming support for VSCode",
     "version": "1.0.0",
     "repository": "https://github.com/hylimo/hylimo-vsc",
+    "publisher": "NiklasKrieger",
     "engines": {
         "vscode": "^1.84.0"
     },
